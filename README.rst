@@ -1,6 +1,6 @@
 # dockpulp-ansible
 ========================
-
+This is only a draft, need to be tested.
 
 dockpulp_repo
 --------------
@@ -11,9 +11,9 @@ the playbook need to have dock-pulp installed
 pip3 install --no-deps git+https://github.com/release-engineering/dockpulp.git@dockpulp-1.67-1
 
 and three configuration files for dockpulp server
-dockpulp.conf
-dockpulpdistributions.json
-dockpulpdistributors.json
+*dockpulp.conf
+*dockpulpdistributions.json
+*dockpulpdistributors.json
 
 .. code-block:: yaml
 
