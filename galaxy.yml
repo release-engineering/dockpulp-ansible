@@ -1,0 +1,16 @@
+namespace: ktdreyer
+name: koji_ansible
+version: "{{ version }}"
+description: Ansible modules to manage Koji resources
+readme: README.md
+authors:
+- Hongwei Liu <hongliu@redhat.com>
+license:
+- GPL-3.0-or-later
+tags:
+- dockpulp
+- buildsystem
+- packaging
+repository: https://github.com/release-engineering/dockpulp-ansible
+homepage: https://github.com/release-engineering/dockpulp-ansible
+issues: https://github.com/release-engineering/dockpulp-ansible/issues
