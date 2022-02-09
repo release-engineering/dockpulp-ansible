@@ -41,6 +41,13 @@ options:
          be used for the following:
        - "Example: rhceph"
      required: true
+   content_url:
+     description:
+       - the path for content of dockpulp repo. It need to start with '/content' and end
+         with $repo_name. It is not required if redirect-url = no in /etc/dockpulp.conf,
+         but we still make it required in this module.
+       - "Example: /content/dist/containers/rhel8/multiarch/containers/redhat-rhceph-rhceph-4-rhel8"
+     required: true
    description:
      description:
        - a description for the dockpulp repo
@@ -72,6 +79,7 @@ EXAMPLES = """
       dockpulp_password: fakeuserPassw0rd
       repo_name: rhceph-4-rhel8
       namespace: rhceph
+      content_url: /content/dist/containers/rhel8/multiarch/containers/redhat-rhceph-rhceph-4-rhel8
       description: This is a test repo for create dockpulp repo
       distribution: ga
 - name: create dockpulp repositories on rhel9
@@ -82,9 +90,9 @@ EXAMPLES = """
       env: stage
       dockpulp_user: fakeuser
       dockpulp_password: fakeuserPassw0rd
-      repo_name: rhceph-4-rhel8
+      repo_name: rhceph-4-rhel9
       namespace: rhceph
-      platform: rhel9
+      content_url: /content/dist/containers/rhel9/multiarch/containers/redhat-rhceph-rhceph-4-rhel9
       description: This is a test repo for create dockpulp repo
       distribution: ga
 """
@@ -170,12 +178,7 @@ def create_command(env, dockpulp_repo):
     distribution = dockpulp_repo.get("distribution")
     description = dockpulp_repo.get("description")
     namespace = dockpulp_repo.get("namespace")
-    platform = dockpulp_repo.get("platform")
-    path = "/content/dist/containers/%s/multiarch/containers/redhat-%s-%s" % (
-        platform,
-        namespace,
-        repo_name,
-    )
+    content_url = dockpulp_repo.get("content_url")
 
     command = [
         "dock-pulp",
@@ -184,7 +187,7 @@ def create_command(env, dockpulp_repo):
         "create",
         namespace,
         repo_name,
-        path,
+        content_url,
         "--description=%s" % description,
         "--distribution=%s" % distribution,
     ]
@@ -389,7 +392,7 @@ def run_module():
         dockpulp_password=dict(required=True, no_log=True),
         repo_name=dict(required=True),
         namespace=dict(required=True),
-        platform=dict(default='rhel8'),
+        content_url=dict(required=True),
         description=dict(required=True),
         distribution=dict(required=True),
     )
@@ -397,6 +400,21 @@ def run_module():
 
     check_mode = module.check_mode
     params = module.params
+
+    repo_name = params["repo_name"]
+    content_url = params["content_url"]
+    if not content_url.startswith("/content"):
+        module.fail_json(
+            msg="the content-url needs to start with /content",
+            changed=False,
+            rc=1,
+        )
+    if not content_url.rstrip("/").endswith(repo_name):
+        module.fail_json(
+            msg="the content-url needs to end with %s" % repo_name,
+            changed=False,
+            rc=1,
+        )
 
     try:
         result = ensure_dockpulp_repo(params, check_mode)

@@ -14,6 +14,7 @@ class TestSetupDockpulp(TestCase):
             "distribution": "ga",
             "description": "virt-artifacts-server contains different builds of virtctl.",
             "env": "qa",
+            "content_url": "/content/redhat-namespace-test-virt-artifacts-server-rhel8",
             "dockpulp_user": "dockpulp_user",
             "dockpulp_password": "dockpulp_Passw0rd",
         }
@@ -105,10 +106,8 @@ class TestSetupDockpulp(TestCase):
             "description": "fake description",
             "distribution": "tech-preview",
             "namespace": "redhat-namespace",
+            "content_url": "/content/containers/redhat-redhat-namespace-test-repo",
         }
-        path = (
-            "/content/dist/containers/rhel8/multiarch/containers/redhat-redhat-namespace-test-repo"
-        )
         expected_command = [
             "dock-pulp",
             "--server",
@@ -116,7 +115,7 @@ class TestSetupDockpulp(TestCase):
             "create",
             "redhat-namespace",
             "test-repo",
-            path,
+            "/content/containers/redhat-redhat-namespace-test-repo",
             "--description=fake description",
             "--distribution=tech-preview",
         ]
